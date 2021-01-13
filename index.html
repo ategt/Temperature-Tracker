@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Socket Test</title>
+	<style type="text/css">
+		textarea {
+		    height: 10em;
+    		width: 18em;
+		}
+		.input-wrapper {
+		    display: grid;
+    		margin: 9px;
+    		grid-gap: 8px;
+		}
+		.input-fields {
+			display: flex;
+    		flex-flow: wrap;
+		}
+	</style>
+</head>
+<body>
+	<div class="banner">
+		<h1>Flask-SocketIO Test</h1>
+	</div>
+	<form>
+		<div class="send-area">
+			<div class="sub-banner send-sub-banner">
+				<h2>Send:</h2>
+			</div>
+			<div class="input-fields">
+				<div class="input-wrapper">
+					<textarea name="emitter" id="emitter"></textarea>
+					<input type="button" name="emit" value="Emit" />
+				</div>
+				<div class="input-wrapper">
+					<textarea name="broadcaster" id="broadcaster"></textarea>
+					<input type="button" name="broadcast" value="Broadcast" />
+				</div>
+			</div>
+		</div>
+		<div class="recieve-area">
+			<div class="sub-banner receive-sub-banner">
+				<h2>Receive:</h2>
+			</div>
+			<div id="recieved"></div>
+		</div>
+	</form>
+</body>
+</html>
