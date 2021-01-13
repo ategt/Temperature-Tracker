@@ -3,6 +3,33 @@
 <head>
 	<title>Socket Test</title>
 	<script type="text/javascript" src="./socket.io.js"></script>
+	<script type="text/javascript">
+		const socket = io();
+
+		socket.on('my response', function(msg) {
+        	const el = document.getElementById("recieved");
+        	const divElement = document.createElement("div");
+
+        	divElement.innerText = msg.data;
+        	el.appendChild(divElement);
+    	});
+
+		window.addEventListener("load", function (event) {
+			const emitButton = document.getElementById("emit-button");
+
+	    	emitButton.addEventListener("click", function(event) {
+	    		const emitText = document.getElementById("emitter").value;
+	    		socket.emit('my event', {data: emitText});
+			});
+
+			const broadcastButton = document.getElementById("broadcast-button");
+
+	    	broadcastButton.addEventListener("click", function(event) {
+	    		const broadcastText = document.getElementById("broadcaster").value;
+	    		socket.emit('my broadcast event', {data: broadcastText});
+			});
+		});
+	</script>
 	<style type="text/css">
 		textarea {
 		    height: 10em;
@@ -31,11 +58,11 @@
 			<div class="input-fields">
 				<div class="input-wrapper">
 					<textarea name="emitter" id="emitter"></textarea>
-					<input type="button" name="emit" value="Emit" />
+					<input type="button" name="emit" id="emit-button" value="Emit" />
 				</div>
 				<div class="input-wrapper">
 					<textarea name="broadcaster" id="broadcaster"></textarea>
-					<input type="button" name="broadcast" value="Broadcast" />
+					<input type="button" id="broadcast-button" name="broadcast" value="Broadcast" />
 				</div>
 			</div>
 		</div>
