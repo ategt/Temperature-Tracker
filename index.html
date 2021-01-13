@@ -21,10 +21,14 @@
     	};
 
     	const format_response = function (line_item) {
-    		const datum = +NUMBER_REGEX.exec(line_item).pop();
-    		const temperature = mv_to_f(datum);
+    		try {
+    			const datum = +NUMBER_REGEX.exec(line_item).pop();
+    			const temperature = mv_to_f(datum);
 
-    		return `${Math.round(temperature)}°F - ${datum} - ${line_item}`;
+    			return `${Math.round(temperature)}°F - ${datum} - ${line_item}`;
+    		} catch (ex) {
+    			return line_item;
+    		}
     	};
 
     	const update_temperature_data = function (line_item) {
@@ -32,19 +36,24 @@
     		const temperature = mv_to_f(datum);
 
     		const data = window.chartThings.data;
+    		const width = window.chartThings.width;
+    		const height = window.chartThings.height;
+    		const margin = window.chartThings.margin;
 
     		data.push(temperature);
 
+    		data.splice(0, Math.max(data.length-250, 0));
+
     		// update axis domains
 			window.chartThings.x.domain([0, data.length]).range([margin.left, width - margin.right]);
-			window.chartThings.y.domain([0, d3.max(data, function(d) { return d; })]);
+			window.chartThings.y.domain([d3.min(data, function(d) { return d; }), d3.max(data, function(d) { return d; })]);
 
 			const graph = window.chartThings.graph;
 			const line = window.chartThings.line;
 
 			// update axis labels
-			graph.selectAll("g.y.axis").call(yAxis);
-			graph.selectAll("g.x.axis").call(xAxis);
+			graph.selectAll("g.y.axis").call(window.chartThings.yAxis);
+			graph.selectAll("g.x.axis").call(window.chartThings.xAxis);
 
 			// re-draw data
 			graph.selectAll("path").attr("d", line(data));
@@ -57,7 +66,9 @@
         	headingElement.innerText = format_response(msg.data);
         	el.replaceChildren(headingElement);
 
-        	update_temperature_data(msg.data);
+        	if (window.chartThings) {
+        		update_temperature_data(msg.data);
+        	}
     	});
 
 		window.addEventListener("load", function (event) {
@@ -89,6 +100,13 @@
 		.input-fields {
 			display: flex;
     		flex-flow: wrap;
+		}
+		.recieved-field {
+		    height: 14em;
+		    width: 36em;
+		    /*border: 1px solid black;*/
+		    padding: 5px;
+		    overflow-y: overlay;
 		}
 	</style>
 	<style type="text/css">
@@ -152,15 +170,15 @@
 			<div class="sub-banner receive-sub-banner">
 				<h2>Receive:</h2>
 			</div>
-			<div id="recieved"></div>
+			<div id="recieved" class="recieved-field"></div>
 		</div>
 	</form>
 	<script type="text/javascript">
-		const margin = ({top: 20, right: 30, bottom: 30, left: 40});
+		const margin = ({top: 0, right: 0, bottom: 20, left: 35});
 		const height = 133;
-		const width = 240;
+		const width = 275;
 
-		window.data = new Array();
+		const data = new Array();
 
 		const x = d3.scaleLinear().domain([0, data.length]).range([margin.left, width - margin.right]);
 		const y = d3.scaleLinear().domain([0, 10]).range([height - margin.bottom, margin.top]);
@@ -176,8 +194,8 @@
 				return y(d);
 			});
 
-		x.domain(d3.extent(data, function(d) { return d.x; }));
-		y.domain([0, d3.max(data, function(d) { return d.y; })]);
+		x.domain(d3.extent(data, function(d) { return d; }));
+		y.domain([d3.min(data, function(d) { return d; }), d3.max(data, function(d) { return d; })]);
 
 		const xAxis = function (g) {
 			return g
@@ -186,15 +204,20 @@
 	    };
 
 		const yAxis = function (g) {
+			//const ticks = Math.round(Math.max(...data) - Math.min(...data)) + 2;
+			//console.log(ticks);
+			const ticks = 3;
+
 			return g
 		    .attr("transform", `translate(${margin.left},0)`)
-		    .call(d3.axisLeft(y))
+		    //.call(d3.axisLeft(y))
+		    .call(d3.axisLeft(y).ticks(ticks).tickSizeOuter(0))
 		    .call(g => g.select(".domain").remove())
 		    .call(g => g.select(".tick:last-of-type text").clone()
 		        .attr("x", 3)
 		        .attr("text-anchor", "start")
 		        .attr("font-weight", "bold")
-		        .text("Some Text"));
+		        .text(""));
 		};
 
 		const graph = d3.select("#temperature-graph").append("svg")
@@ -225,7 +248,7 @@
 				.attr("stroke", "steelblue")
 				.attr("stroke-width", "1.5")
 				.attr("stroke-opacity", "1")
-				.attr("d", line(window.data));
+				.attr("d", line(data));
 
 		window.chartThings = {
 			x: x,
@@ -233,6 +256,11 @@
 			graph: graph,
 			data: data,
 			line: line,
+			margin: margin,
+			height: height,
+			width: width,
+			yAxis: yAxis,
+			xAxis: xAxis,
 		};
 	</script>
 </body>
