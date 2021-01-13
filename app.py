@@ -16,22 +16,14 @@ def index():
 def socket_file():
     return send_from_directory(".","socket.io.js", as_attachment=False)
 
+@app.route('/d3.v6.js')
+def d3_file():
+    return send_from_directory(".","d3.v6.js", as_attachment=False)
+
 @app.route('/reading/', methods={"HEAD", "OPTIONS", "POST"})
 def reading_update():
-	#print("00000000000000000000000000000000000000")
 	rq = flask.request
-	#print("1", rq)
 	data = rq.get_json()
-	#print("2222222222222222222222222222222222")
-	#print(data)
-	print(data['sensor_reading'])
-
-	#emit('my response', {'data': data['sensor_reading']})
-
-	#response = flask.make_response()
-
-	#response.set_data({'result': 'OK'})
-	#response.headers['Content-Type'] = 'text/json'
 
 	return flask.jsonify(result='OK')
 
