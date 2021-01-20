@@ -20,16 +20,7 @@ void setup() {
 void loop() {
   // read the input on analog pin 0:
   int sensorValue = analogRead(A0);
-  int sensorValues[10] = {analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0),
-                          analogRead(A0)};
+  int sensorValues[50];
 
   // print out the value you read:
   Serial.print(sensorValue);
@@ -37,13 +28,14 @@ void loop() {
 
   int cum = 0;
 
-  for (int x=0;x<10;x=x+1) {
+  for (int x=0;x<sizeof(sensorValues);x=x+1) {
+      sensorValues[x] = analogRead(A0);
       Serial.print(sensorValues[x]);
       Serial.print(",");
       cum += sensorValues[x];
     }
   
-  Serial.println(cum/10);
+  Serial.println(cum/sizeof(sensorValues));
   
   delay(1000);        // delay in between reads for stability
 }
