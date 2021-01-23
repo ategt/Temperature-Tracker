@@ -28,7 +28,7 @@ void loop() {
 
   int cum = 0;
 
-  for (int x=0;x<readingCount;x=x+1) {
+  for (int x = 0; x < readingCount; x = x + 1) {
       cum += analogRead(A0);
     }
   
