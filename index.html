@@ -8,14 +8,6 @@
     	const NUMBER_REGEX = new RegExp("b\\'([\\d]+)");
 		const socket = io();
 
-		socket.on('my response', function(msg) {
-        	const el = document.getElementById("recieved");
-        	const divElement = document.createElement("div");
-
-        	divElement.innerText = msg.data;
-        	el.appendChild(divElement);
-    	});
-
     	const mv_to_f = function (mv) {
     		return (mv - 202.4) / 3.7;
     	};
@@ -70,22 +62,6 @@
         		update_temperature_data(msg.data);
         	}
     	});
-
-		window.addEventListener("load", function (event) {
-			const emitButton = document.getElementById("emit-button");
-
-	    	emitButton.addEventListener("click", function(event) {
-	    		const emitText = document.getElementById("emitter").value;
-	    		socket.emit('my event', {data: emitText});
-			});
-
-			const broadcastButton = document.getElementById("broadcast-button");
-
-	    	broadcastButton.addEventListener("click", function(event) {
-	    		const broadcastText = document.getElementById("broadcaster").value;
-	    		socket.emit('my broadcast event', {data: broadcastText});
-			});
-		});
 	</script>
 	<style type="text/css">
 		textarea {
@@ -107,6 +83,13 @@
 		    /*border: 1px solid black;*/
 		    padding: 5px;
 		    overflow-y: overlay;
+		}
+		.reading-banner {
+			padding-right: 10em;
+			padding-left: 10em;
+		}
+		body {
+			text-align: center;
 		}
 	</style>
 	<style type="text/css">
@@ -149,14 +132,14 @@
 	</div>
 	<div class="temperature-graph" id="temperature-graph"></div>
 	<script type="text/javascript">
-		const margin = ({top: 0, right: 0, bottom: 20, left: 35});
-		const height = 133*3;
-		const width = 275*3;
+		const margin = ({top: 0, right: 0, bottom: 20, left: 60});
+		const height = 133*3.7;
+		const width = 275*4;
 
 		const data = new Array();
 
-		const x = d3.scaleLinear().domain([0, data.length]).range([margin.left, width - margin.right]);
-		const y = d3.scaleLinear().domain([0, 10]).range([height - margin.bottom, margin.top]);
+		const x = d3.scaleLinear().range([margin.left, width - margin.right]);
+		const y = d3.scaleLinear().range([height - margin.bottom, margin.top]);
 
 		const line = d3.line()
 			// assign the X function to plot our line as we wish
@@ -169,9 +152,6 @@
 				return y(d);
 			});
 
-		x.domain(d3.extent(data, function(d) { return d; }));
-		y.domain([d3.min(data, function(d) { return d; }), d3.max(data, function(d) { return d; })]);
-
 		const xAxis = function (g) {
 			return g
 	    	.attr("transform", `translate(0,${height - margin.bottom})`)
@@ -179,13 +159,10 @@
 	    };
 
 		const yAxis = function (g) {
-			//const ticks = Math.round(Math.max(...data) - Math.min(...data)) + 2;
-			//console.log(ticks);
 			const ticks = 3;
 
 			return g
 		    .attr("transform", `translate(${margin.left},0)`)
-		    //.call(d3.axisLeft(y))
 		    .call(d3.axisLeft(y).ticks(ticks).tickSizeOuter(0))
 		    .call(g => g.select(".domain").remove())
 		    .call(g => g.select(".tick:last-of-type text").clone()
@@ -213,17 +190,20 @@
 			.call(yAxis)
 			.append("text")
 				.attr("transform", "rotate(-90)")
-				.attr("y", 6)
+				.attr("y", -48)
 				.attr("dy", "0.71em")
-				.style("text-anchor", "end")
-				.text("Number Of Messages")
+				.attr("x", 0-(height/2))
+				.attr("font-size", "1.4em")
+				.attr("fill", "black")
+				.attr("font-weight", "bold")
+				.style("text-anchor", "middle")
+				.text("Temperature (°F)");
 
 		graph.append("svg:path")
 				.attr("fill", "none")
 				.attr("stroke", "steelblue")
 				.attr("stroke-width", "1.5")
-				.attr("stroke-opacity", "1")
-				.attr("d", line(data));
+				.attr("stroke-opacity", "1");
 
 		window.chartThings = {
 			x: x,
