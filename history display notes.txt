@@ -1,0 +1,16 @@
+data.splice(0, data.length);
+temperatures = readingx.map(item => mv_to_f(+item));
+temperatures.slice(1006).slice(0, 175*60).forEach(item => data.push(item));
+
+const graphx = window.chartThings.graph;
+const linex = window.chartThings.line;
+
+window.chartThings.x.domain([0, data.length/60]).range([margin.left, width - margin.right]);
+window.chartThings.y.domain([d3.min(data, function(d) { return d; }), d3.max(data, function(d) { return d; })]);
+
+// update axis labels
+graphx.selectAll("g.y.axis").call(window.chartThings.yAxis);
+graphx.selectAll("g.x.axis").call(window.chartThings.xAxis);
+
+// re-draw data
+graphx.selectAll("path").attr("d", linex(data));
