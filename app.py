@@ -20,32 +20,16 @@ def socket_file():
 def d3_file():
     return send_from_directory(".","d3.v6.js", as_attachment=False)
 
-@app.route('/reading/', methods={"HEAD", "OPTIONS", "POST"})
-def reading_update():
+@app.route('/reading/', methods={"GET"})
+def get_readings():
 	rq = flask.request
 	data = rq.get_json()
 
 	return flask.jsonify(result='OK')
 
-@socketio.on('my event')
-def test_message(message):
-    emit('my response', {'data': message['data']})
-
-@socketio.on('my broadcast event')
-def test_message(message):
-    emit('my response', {'data': message['data']}, broadcast=True)
-
 @socketio.on('sensor reading event')
 def test_sensor(message):
     emit('sensor reading broadcast', {'data': message['data']}, broadcast=True)
-
-@socketio.on('connect')
-def test_connect():
-    emit('my response', {'data': 'Connected'})
-
-@socketio.on('disconnect')
-def test_disconnect():
-    print('Client disconnected')
 
 @app.after_request
 def add_header(response):
