@@ -19,14 +19,14 @@ void setup() {
 // the loop routine runs over and over again forever:
 void loop() {
   // read the input on analog pin 0:
-  int sensorValue = analogRead(A0);
-  int readingCount = 100;
+  unsigned int sensorValue = analogRead(A0);
+  unsigned int readingCount = 100;
 
   // print out the value you read:
   Serial.print(sensorValue);
   Serial.print(",");
 
-  unsigned int cum = 0;
+  unsigned long cum = 0;
 
   for (int x = 0; x < readingCount; x = x + 1) {
       cum += analogRead(A0);

@@ -145,7 +145,7 @@
 			// assign the X function to plot our line as we wish
 			.x(function(d,i){
 				// return the X coordinate where we want to plot this datapoint
-				return x(i+1);
+				return x((i+1)/60);
 			})
 			.y(function (d) {
 				// return the Y coordinate where we want to plot this datapoint
@@ -159,11 +159,11 @@
 	    };
 
 		const yAxis = function (g) {
-			const ticks = 3;
+			const ticks = 8;
 
 			return g
 		    .attr("transform", `translate(${margin.left},0)`)
-		    .call(d3.axisLeft(y).ticks(ticks).tickSizeOuter(0))
+		    .call(d3.axisLeft(y).ticks(ticks))
 		    .call(g => g.select(".domain").remove())
 		    .call(g => g.select(".tick:last-of-type text").clone()
 		        .attr("x", 3)
@@ -181,7 +181,17 @@
 		graph.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0, 0)")
-			.call(xAxis);
+			.call(xAxis)
+			.append("text")
+				.attr("y", 0)
+				.attr("dy", "0.71em")
+				.attr("x", 0-(width/2))
+				.attr("font-size", "1.4em")
+				.attr("fill", "black")
+				.attr("font-weight", "bold")
+				.style("text-anchor", "middle")
+				.text("Time (Seconds)");
+
 
 		// Add the y-axis to the left
 		graph.append("g")
