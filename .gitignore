@@ -1,1 +1,12 @@
 __pycache__/
+
+d3.v6.js
+
+socket.io.js
+socket.io.js.map
+socket.io.min.js
+socket.io.min.js.map
+socket.io.msgpack.min.js
+socket.io.msgpack.min.js.map
+
+temp*.txt
