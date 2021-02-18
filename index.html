@@ -34,7 +34,7 @@
 
     		data.push(temperature);
 
-    		data.splice(0, Math.max(data.length-250, 0));
+    		//data.splice(0, Math.max(data.length-250, 0));
 
     		// update axis domains
 			window.chartThings.x.domain([0, data.length/60]).range([margin.left, width - margin.right]);
