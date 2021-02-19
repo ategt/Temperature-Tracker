@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from datetime import datetime
 from random import randint
 from time import sleep
 import socketio
@@ -15,7 +16,7 @@ def main():
     
     result = _serial.read_all()
     
-    with open("temp3.txt", 'ab') as handle:
+    with open("temp.txt", 'ab') as handle:
         handle.write(str(time.time()).encode())
         handle.write(comma)
         handle.write(result)
@@ -23,7 +24,9 @@ def main():
     if sio:
         sio.connect("ws://127.0.0.1:5000/")
 
-    with open("temp.txt", 'ab') as handle:
+    date_string = datetime.now().strftime("%F")
+
+    with open(f"temp-{date_string}.txt", 'ab') as handle:
       for _ in range(90000):
               result = _serial.readline()
               handle.write(str(time.time()).encode())
