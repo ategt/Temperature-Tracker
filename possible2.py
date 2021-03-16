@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from possible import SegmentationDetector
+from segmentation_detector import SegmentationDetector
 
 detector = SegmentationDetector("data/temp-2021-03-04.txt", 20000)
 inflection_segments = detector.getSegmentInflections(30)
