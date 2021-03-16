@@ -7,6 +7,7 @@ import socketio
 import serial
 import time
 import re
+import os
 
 def main():
   try:
@@ -16,7 +17,7 @@ def main():
     
     result = _serial.read_all()
     
-    with open("temp.txt", 'ab') as handle:
+    with open(os.path.join(os.getenv("DATA_PATH"), "temp.txt"), 'ab') as handle:
         handle.write(str(time.time()).encode())
         handle.write(comma)
         handle.write(result)
@@ -26,17 +27,17 @@ def main():
 
     date_string = datetime.now().strftime("%F")
 
-    with open(f"temp-{date_string}.txt", 'ab') as handle:
+    with open(os.path.join(os.getenv("DATA_PATH"), f"temp-{date_string}.txt"), 'ab') as handle:
       for _ in range(90000):
               result = _serial.readline()
               handle.write(str(time.time()).encode())
               handle.write(comma)
               handle.write(result)
-              
+
               readings = result.split(comma)
               first_reading = readings[0]
               avg_reading = readings[-1]
-              
+
               try:
                   sio.emit("sensor reading event", {"data":str(avg_reading)})
               except socketio.exceptions.BadNamespaceError as ex:

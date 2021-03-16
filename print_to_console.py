@@ -7,12 +7,12 @@ import re
 try:
   _serial = serial.Serial("COM4", 9600)
   comma = ",".encode()
-  
+
   result = _serial.read_all()
-  
+
   for _ in range(90000):
     result = _serial.readline()
-            
+
     readings = result.split(comma)
     first_reading = readings[0]
     avg_reading = readings[-1]
