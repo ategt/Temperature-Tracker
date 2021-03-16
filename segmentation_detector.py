@@ -158,6 +158,17 @@ class SegmentationDetector(object):
 
         return sorted(transitions, key=lambda x:x[0])
 
+    def getSegmentsAuto(self, width):
+        twoPassSegments = self.getSegmentInflectionsTwoPass(width)
+
+        peak_segment = max(twoPassSegments, key=lambda x:int(x[1]))
+
+        filtered_two_pass = [(idx, reading, direction) for idx, reading, direction in twoPassSegments if idx <= peak_segment[0]]
+        starting_segment = min(filtered_two_pass, key=lambda x:int(x[1]))
+        filtered_two_pass = [(idx, reading, direction) for idx, reading, direction in filtered_two_pass if idx >= starting_segment[0]]
+
+        return filtered_two_pass
+
     def display(self, inflectionSegments, readingLimit = None):
         import matplotlib.pyplot as plt
 
