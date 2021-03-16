@@ -1,40 +1,21 @@
 import unittest
 
-from tabata_timer import TabataTimer
-from time import sleep
+from possible import SegmentationDetector
 
-class TestTabataTimer(unittest.TestCase):
+class TestSegmentationDetection(unittest.TestCase):
     def setUp(self):
         pass
 
     def tearDown(self):
-        self.timer.stop()
+        pass
 
-    def test_start_many_timers(self):
-        self.timer = TabataTimer()
+    def test_segmenter(self):
+        detector = SegmentationDetector("data/temp-2021-03-16.txt")
 
-        self.timer.start()
+        inflection_segments = detector.getSegmentInflections(30)
 
-        with self.assertRaises(Exception):
-            self.timer.start()
-
-        self.timer.stop()
-        self.timer.start()
-
-        with self.assertRaises(Exception):
-            self.timer.start()
-
-    def test_getPid(self):
-        self.timer = TabataTimer()
-
-        self.timer.getPid()
-        self.timer.start()
-        self.timer.getPid()
-
-    def test_stop_without_start(self):
-        self.timer = TabataTimer()
-
-        self.timer.stop()
+        self.assertTrue(len(inflection_segments) >= 18, "Minimum Acceptable Segments")
+        self.assertTrue(len(inflection_segments) <= 30, "Maximum Acceptable Segments")
 
 if __name__ == '__main__':
     unittest.main()
