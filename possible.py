@@ -6,13 +6,16 @@ class SegmentationDetector(object):
     """SegmentationDetector
         @path is the path to a data file to read
     """
-    def __init__(self, path):
+    def __init__(self, path, readingLimit = None):
         super(SegmentationDetector, self).__init__()
         self.path = path        # "data/temp-2021-03-16.txt"
         
         self.READING_REGEX = re.compile("(?P<timestamp>[\.\d]+)\,(?P<raw_reading>\d+)\,(?P<denoised_reading>\d+)")
 
         self._loadReadings()
+
+        if readingLimit:
+            self._readings = self._readings[:readingLimit]
 
     def _readData(self):
         with open(self.path, 'rb') as handle:
