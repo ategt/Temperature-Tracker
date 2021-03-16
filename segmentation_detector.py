@@ -105,6 +105,59 @@ class SegmentationDetector(object):
         
         return [(reading_index, self.getDenoisedReadings()[reading_index], direction) for reading_index, direction in sorted_transitions]
 
+    def getDirectionalitiesTwoPass(self, inflectionSegments):
+        """
+            Uses smoothing to calm directionality noise.
+            @width - width of reading slices used in smoothing.
+        """
+        continuations = set()
+        directionality = set()
+
+        for this_segment, next_segment in list(zip(inflectionSegments, inflectionSegments[1:])):
+            current_idx, current_reading, current_direction = this_segment
+            next_idx, next_reading, next_direction = next_segment
+            
+            if int(current_reading) == int(next_reading):
+                directionality.add((current_idx, current_reading, "flat"))
+            elif int(current_reading) > int(next_reading):
+                directionality.add((current_idx, current_reading, "down"))
+            elif int(current_reading) < int(next_reading):
+                directionality.add((current_idx, current_reading, "up"))
+            else:
+                print(current_reading, next_reading)
+                break
+
+        return directionality
+
+    def getTransitionsTwoPass(self, directs):
+        last_meaningful_direction = (0, 0, "flat")
+        transition_direction = (0, 0, "flat")
+        last_direction = (0, 0, "flat")
+        continuations = set()
+        transitions = set()
+
+        for dx in sorted(directs, key=lambda x:x[0]):
+            if "flat" in dx:
+                continuations.add(dx)
+            elif last_direction[2] == dx[2]:
+                continuations.add(dx)
+                last_direction = dx
+            elif last_direction[2] not in dx:
+                last_direction = dx
+                transitions.add(dx)
+            else:
+                print(dx, "=" * 25)
+                break
+
+        return transitions
+
+    def getSegmentInflectionsTwoPass(self, width):
+        inflection_segments = self.getSegmentInflections(width)
+        directionalities = self.getDirectionalitiesTwoPass(inflection_segments)
+        transitions = self.getTransitionsTwoPass(directionalities)
+
+        return sorted(transitions, key=lambda x:x[0])
+
     def display(self, inflectionSegments, readingLimit = None):
         import matplotlib.pyplot as plt
 
