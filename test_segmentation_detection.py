@@ -27,7 +27,7 @@ class TestSegmentationDetection(unittest.TestCase):
             if TEMPERATURE_DATA_FILE_REGEX.match(file):
                 path = os.path.join("data", file)
 
-                detector = SegmentationDetector(path, 10000)
+                detector = SegmentationDetector(path, 25000)
 
                 inflection_segments = detector.getSegmentInflections(30)
 
