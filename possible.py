@@ -105,43 +105,20 @@ class SegmentationDetector(object):
         
         return [(reading_index, self.getDenoisedReadings()[reading_index], direction) for reading_index, direction in sorted_transitions]
 
+    def display(self, inflectionSegments, readingLimit = None):
+        import matplotlib.pyplot as plt
 
+        plt.title('MV Readings')
 
+        data = self._readData()
+        readings = self._extractReadings(data)
 
+        all_denoised_readings = [(idx, reading['denoised_reading']) for idx, reading in enumerate(readings[:readingLimit])]
+        idxes, measurements = list(zip(*all_denoised_readings))
 
-               
-# len(transitions)
+        plt.plot(idxes, measurements, color='blue')
 
-# import matplotlib.pyplot as plt
+        idxes, measurements, _directions = list(zip(*inflectionSegments))
+        plt.plot(idxes, measurements, color='green')
 
-# plt.title('MV Readings')
-
-# all_readings = [(idx, reading) for idx, reading in enumerate(drn)]
-# idxes, measurements = list(zip(*all_readings))
-
-# plt.plot(idxes, measurements, color='blue')
-
-
-# local = sorted(local_maximum|local_minimum, key=lambda x:x[0])
-
-# idxes, measurements = list(zip(*local))
-# plt.plot(idxes, measurements, color='red')
-
-# sorted_smoothed_readings = sorted(smoothed_readings, key=lambda x:x[0])
-
-# idxes, _, measurements = list(zip(*sorted_smoothed_readings))
-# restrung_measurements = [str(round(r)) for r in measurements]
-# plt.plot(idxes, restrung_measurements, color='green')
-
-# plt.plot(idxes, measurements, color='orange')
-
-# plt.show()
-
-# sorted_transitions = sorted(transitions, key=lambda x:x[0])
-
-# idxes, _measurements = list(zip(*sorted_transitions))
-# measurements = [drn[r] for r in idxes]
-
-# len(transitions)
-
-# [(r, drn[r], s) for r, s in sorted_transitions]
+        plt.show()
